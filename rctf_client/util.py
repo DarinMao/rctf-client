@@ -2,6 +2,7 @@ import re
 import pathlib
 import requests
 import shutil
+import urllib
 
 def ordinal_suffix(i):
   j = i % 10
@@ -58,6 +59,7 @@ def download_challenge(ctf_root, config, challenge):
     files_dir = challenge_root / "files"
     files_dir.mkdir(parents=True, exist_ok=True)
     for challenge_file in challenge["files"]:
-      with requests.get(challenge_file["url"], stream=True) as stream:
+      url = urllib.parse.urljoin(config["url"], challenge_file["url"])
+      with requests.get(url, stream=True) as stream:
         with open(files_dir / safe_name(challenge_file["name"]), "wb") as fw:
           shutil.copyfileobj(stream.raw, fw)
